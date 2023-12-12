@@ -3,46 +3,46 @@ using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
+using UnityEngine.SceneManagement; // Required for scene management
 
 public class SpawnScript : MonoBehaviour
 {
+    public GameObject objectToMove;
+    public float velocity = 5.0f;
+    public float resetDistance = 100.0f;
 
-    public GameObject objectToSpawn;
-    private Vector3 originalPosition = new Vector3(68.61f, 1.6f, -58.99f); // Starting position
-    private GameObject movingObject;
-    public float speed = 5f;
-    public float respawnThreshold = 3000f; // Distance after which the object should respawn
+    private Vector3 originalPosition;
+    private Vector3 movementDirection = Vector3.forward;
 
+    void Start()
+    {
+        if (objectToMove != null)
+        {
+            originalPosition = objectToMove.transform.position;
+        }
+        else
+        {
+            Debug.LogError("No GameObject assigned to objectToMove in MoveAndReset script.");
+        }
+    }
 
     void Update()
     {
-        if (movingObject != null)
+        if (objectToMove != null)
         {
-            // Move the object
-            Vector3 movementDirection = new Vector3(0, 0, 1); // Modify as needed
-            movingObject.transform.position += movementDirection * speed * Time.deltaTime;
+            objectToMove.transform.Translate(movementDirection * velocity * Time.deltaTime);
 
-            // Check if the object has reached the respawn threshold
-            if (Vector3.Distance(movingObject.transform.position, originalPosition) > respawnThreshold)
+            if (Vector3.Distance(originalPosition, objectToMove.transform.position) >= resetDistance)
             {
-                movingObject.transform.position = originalPosition; // Reset position
+                objectToMove.transform.position = originalPosition;
             }
         }
     }
 
-
-
-    void Start()
-        {
-            SpawnObject();
-        }
-    
-
-    void SpawnObject()
+    // Collision detection method
+    void OnCollisionEnter(Collision collision)
     {
-        if (movingObject == null)
-        {
-            movingObject = Instantiate(objectToSpawn, originalPosition, UnityEngine.Quaternion.identity);
-        }
+        // Reload the current scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
