@@ -53,7 +53,7 @@ public class PauseMenuScript : MonoBehaviour
 
     public void MainMenuButton()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 }

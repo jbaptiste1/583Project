@@ -16,6 +16,7 @@ namespace StarterAssets
     public class ThirdPersonController : MonoBehaviour
     {
         public string triggerTag = "Respawn"; // Set this to the tag you want to check for
+        private bool playerMovesAway = false;
 
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
@@ -157,14 +158,24 @@ namespace StarterAssets
             _fallTimeoutDelta = FallTimeout;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             _hasAnimator = TryGetComponent(out _animator);
 
             JumpAndGravity();
             GroundedCheck();
             Move();
+            if (Input.GetKeyDown(KeyCode.Space)) // Example: player presses jump key
+            {
+                playerMovesAway = true;
+            }
+
+            if (playerMovesAway)
+            {
+                this.transform.SetParent(null);
+            }
         }
+    
 
         private void LateUpdate()
         {
@@ -401,6 +412,12 @@ namespace StarterAssets
             if (hit.rigidbody || hit.gameObject.CompareTag(triggerTag))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reset the scene
+            }
+
+            if (hit.gameObject.CompareTag("Iceberg"))
+            {
+                this.transform.SetParent(hit.transform);
+                playerMovesAway = false; // Reset when the player lands on the iceberg
             }
 
         }

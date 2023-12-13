@@ -7,6 +7,7 @@ TagManager:
   - CinemachineTarget
   - Igloo
   - IGLOO
+  - Iceberg
   layers:
   - Default
   - TransparentFX
