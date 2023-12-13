@@ -1,6 +1,7 @@
 ﻿ using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -14,6 +15,8 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
+        public string triggerTag = "Respawn"; // Set this to the tag you want to check for
+
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -389,6 +392,17 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+
+            Debug.Log("Collided with " + hit.gameObject.name);
+            if (hit.rigidbody || hit.gameObject.CompareTag(triggerTag))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reset the scene
+            }
+
         }
     }
 }
